@@ -1,2 +1,2 @@
 # AES
-Criptografy_AES
+Criptografi_AES
