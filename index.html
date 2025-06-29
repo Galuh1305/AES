@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>AES Encryption with JavaScript</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: linear-gradient(to right, #e0e0e0, #ffffff);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .container {
+            background-color: #fefefe;
+            border: 2px solid #333;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 1000px;
+            display: flex;
+            gap: 30px;
+        }
+        .box {
+            flex: 1;
+            background-color: #fafafa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #999;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #555;
+            padding-bottom: 10px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            color: #222;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+            color: #000;
+            font-family: monospace;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #222;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kriptografi</h1>
+    <div class="container">
+        <div class="box">
+            <h2>Enkripsi</h2>
+            <label for="keyEnc">Key:</label>
+            <input type="text" id="keyEnc" value="Teknokrat1234567">
+
+            <label for="plaintext">Plaintext:</label>
+            <textarea id="plaintext" rows="5" placeholder="Masukkan teks asli..."></textarea>
+
+            <button onclick="encryptText()">Enkripsi</button>
+
+            <label for="ciphertext">Hasil Ciphertext:</label>
+            <textarea id="ciphertext" rows="5" readonly></textarea>
+        </div>
+
+        <div class="box">
+            <h2>Dekripsi</h2>
+            <label for="keyDec">Key:</label>
+            <input type="text" id="keyDec" value="Teknokrat1234567">
+
+            <label for="cipherInput">Ciphertext:</label>
+            <textarea id="cipherInput" rows="5" placeholder="Masukkan ciphertext..."></textarea>
+
+            <button onclick="decryptText()">Dekripsi</button>
+
+            <label for="plainOutput">Hasil Plaintext:</label>
+            <textarea id="plainOutput" rows="5" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        function repeatKey(key, length) {
+            return key.repeat(Math.ceil(length / key.length)).substring(0, length);
+        }
+
+        function encryptText() {
+            const rawKey = document.getElementById("keyEnc").value;
+            const plaintext = document.getElementById("plaintext").value;
+            const repeatedKey = repeatKey(rawKey, 16);
+            const key = CryptoJS.enc.Utf8.parse(repeatedKey);
+            const encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(plaintext), key, {
+                mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            document.getElementById("ciphertext").value = encrypted.toString();
+        }
+
+        function decryptText() {
+            try {
+                const rawKey = document.getElementById("keyDec").value;
+                const ciphertext = document.getElementById("cipherInput").value;
+                const repeatedKey = repeatKey(rawKey, 16);
+                const key = CryptoJS.enc.Utf8.parse(repeatedKey);
+                const decrypted = CryptoJS.AES.decrypt(ciphertext, key, {
+                    mode: CryptoJS.mode.ECB,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+                const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+                if (!plaintext) throw new Error("Dekripsi gagal atau hasil kosong.");
+                document.getElementById("plainOutput").value = plaintext;
+            } catch (e) {
+                alert("Dekripsi gagal. Pastikan ciphertext dan kunci benar.");
+            }
+        }
+    </script>
+</body>
+</html>
